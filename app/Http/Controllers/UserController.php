@@ -20,7 +20,10 @@ class UserController extends Controller
 
     public function list()
     {
-        $userList = User::all();
+        $tenantID = TenantController::getTenantID();
+
+        $userList = User::where('id_tenant', '=', $tenantID)->get();
+
         return response()->json($userList);
     }
 
