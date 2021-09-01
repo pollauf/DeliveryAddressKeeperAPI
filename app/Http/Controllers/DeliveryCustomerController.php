@@ -24,6 +24,21 @@ class DeliveryCustomerController extends Controller
         return response()->json($customerList);
     }
 
+    public function getById($id)
+    {
+        $tenantID = TenantController::getTenantID();
+
+        $user =
+            DeliveryCustomer::where('id_tenant', '=', $tenantID)
+            ->where('id', '=', $id)
+            ->get();
+
+        if (count($user) > 0)
+            $user = $user[0];
+
+        return response()->json($user);
+    }
+
     public function register(Request $request)
     {
         try {

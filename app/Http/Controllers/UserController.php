@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -27,6 +28,21 @@ class UserController extends Controller
         return response()->json($userList);
     }
 
+    public function getById($id)
+    {
+        $tenantID = TenantController::getTenantID();
+
+        $user =
+            User::where('id_tenant', '=', $tenantID)
+            ->where('id', '=', $id)
+            ->get();
+
+        if (count($user) > 0)
+            $user = $user[0];
+
+        return response()->json($user);
+    }
+
     public function register(Request $request)
     {
         try {
@@ -35,6 +51,9 @@ class UserController extends Controller
             $nome = $request->input('nome');
             $login = $request->input('login');
             $senha = md5($request->input('senha'));
+
+            $token = $tenantID . '_' . $login . '_' . time();
+            $token = Crypt::encrypt($token);
 
             $isDuplicated = User::where('id_tenant', '=', $tenantID)->where('login', '=', $login)->exists();
             if ($isDuplicated) {
@@ -45,6 +64,7 @@ class UserController extends Controller
                 $user->nome = $nome;
                 $user->login = $login;
                 $user->senha = $senha;
+                $user->token = $token;
                 $user->status = 1;
 
                 $user->save();

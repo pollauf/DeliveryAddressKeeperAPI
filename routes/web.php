@@ -18,5 +18,8 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('users', 'UserController@list');
+$router->get('user/{id}', 'UserController@getById');
 $router->post('user/register', 'UserController@register');
+
+$router->get('deliverycustomer/{id}', 'DeliveryCustomerController@getById');
 $router->post('deliverycustomer/register', 'DeliveryCustomerController@register');
