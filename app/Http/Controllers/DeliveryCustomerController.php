@@ -39,6 +39,24 @@ class DeliveryCustomerController extends Controller
         return response()->json($user);
     }
 
+    public function getByPhone(Request $request)
+    {
+        $tenantID = TenantController::getTenantID();
+
+        $phone = $request->input('phone');
+
+        $user =
+            DeliveryCustomer::where('id_tenant', '=', $tenantID)
+            ->where('celular', '=', $phone)
+            ->where('status', '=', 1)
+            ->get();
+
+        if (count($user) > 0)
+            $user = $user[0];
+
+        return response()->json($user);
+    }
+
     public function register(Request $request)
     {
         try {
@@ -58,6 +76,7 @@ class DeliveryCustomerController extends Controller
                 $customer->endereco = $request->input('endereco');
                 $customer->numero = $request->input('numero');
                 $customer->complemento = $request->input('complemento');
+                $customer->bairro = $request->input('bairro');
                 $customer->cidade = $request->input('cidade');
                 $customer->estado = $request->input('estado');
                 $customer->origem = $request->input('origem');

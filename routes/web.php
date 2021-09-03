@@ -23,3 +23,4 @@ $router->post('user/register', 'UserController@register');
 
 $router->get('deliverycustomer/{id}', 'DeliveryCustomerController@getById');
 $router->post('deliverycustomer/register', 'DeliveryCustomerController@register');
+$router->post('deliverycustomer/from/phone', 'DeliveryCustomerController@getByPhone');

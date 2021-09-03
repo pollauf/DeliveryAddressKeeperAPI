@@ -39,6 +39,7 @@ class Base extends Migration
             $table->string('endereco');
             $table->string('numero', 10);
             $table->string('complemento');
+            $table->string('bairro', 100);
             $table->string('cidade', 100);
             $table->string('estado', 50);
 
