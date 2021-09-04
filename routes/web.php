@@ -17,10 +17,16 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('users', 'UserController@list');
-$router->get('user/{id}', 'UserController@getById');
 $router->post('user/register', 'UserController@register');
 
+$router->get('users', 'UserController@list');
+$router->get('user/{id}', 'UserController@getById');
 $router->get('deliverycustomer/{id}', 'DeliveryCustomerController@getById');
 $router->post('deliverycustomer/register', 'DeliveryCustomerController@register');
 $router->post('deliverycustomer/from/phone', 'DeliveryCustomerController@getByPhone');
+
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    $router->get('/user', function () {
+        return response()->json(auth()->user());
+    });
+});
