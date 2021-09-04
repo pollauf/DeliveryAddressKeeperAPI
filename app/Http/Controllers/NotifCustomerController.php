@@ -18,9 +18,25 @@ class NotifCustomerController extends Controller
         //
     }
 
-    public function list()
+    public function list($status = 2)
     {
-        $notificationList = NotificationCustomer::all();
+        $tenantID = TenantController::getTenantID();
+
+        $notificationList =
+            NotificationCustomer::where('notif_cad_cli_delivery.id_tenant', '=', $tenantID)
+            ->select(
+                'notif_cad_cli_delivery.*',
+                'clientes_delivery.nome',
+                'clientes_delivery.celular',
+            )
+            ->join('clientes_delivery', 'clientes_delivery.id', '=', 'notif_cad_cli_delivery.id_cliente_delivery');
+
+        if ($status != 2) {
+            $notificationList = $notificationList->where('notif_cad_cli_delivery.status', '=', $status);
+        }
+
+        $notificationList = $notificationList->get();
+
         return response()->json($notificationList);
     }
 
@@ -32,7 +48,7 @@ class NotifCustomerController extends Controller
             $customer = new NotificationCustomer;
             $customer->id_tenant = $tenantID;
             $customer->id_cliente_delivery = $customerID;
-            $customer->status = 1;
+            $customer->status = 0;
 
             $customer->save();
 
