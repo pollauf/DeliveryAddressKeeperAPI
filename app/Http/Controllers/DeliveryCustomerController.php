@@ -20,7 +20,12 @@ class DeliveryCustomerController extends Controller
 
     public function list()
     {
-        $customerList = DeliveryCustomer::all();
+        $tenantID = TenantController::getTenantID();
+
+        $customerList = DeliveryCustomer::where('id_tenant', '=', $tenantID)
+            ->where('status', '=', 1)
+            ->get();
+
         return response()->json($customerList);
     }
 
@@ -28,13 +33,13 @@ class DeliveryCustomerController extends Controller
     {
         $tenantID = TenantController::getTenantID();
 
-        $user =
+        $customer =
             DeliveryCustomer::where('id_tenant', '=', $tenantID)
             ->where('id', '=', $id)
             ->get();
 
-        if (count($user) > 0)
-            $user = $user[0];
+        if (count($customer) > 0)
+            $customer = $customer[0];
 
         return response()->json($user);
     }

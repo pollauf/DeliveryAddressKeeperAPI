@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
 class Authenticate
 {
@@ -42,16 +43,11 @@ class Authenticate
             return response()->json('No token provided', 401);
         }
 
-        $user = User::where('token', '=', $token)->get();
+        $anyUser = User::where('token', '=', $token)->exists();
 
-        if (count($user) > 0) {
-            return $user;
-            // return $next($request);
+        if ($anyUser) {
+            return $next($request);
         }
-
-        /*if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
-        }*/
 
         return response()->json('Unauthorized.', 401);
     }
