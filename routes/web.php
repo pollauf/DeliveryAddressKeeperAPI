@@ -32,6 +32,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->post('deliverycustomer/from/phone', 'DeliveryCustomerController@getByPhone');
 
     $router->get('notification/status/{status}', 'NotifCustomerController@list');
+    $router->get('notification/setAsViewed/{notificationID}', 'NotifCustomerController@setAsViewed');
 });
 
 /*$router->get('/', function () use ($router) {

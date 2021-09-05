@@ -35,9 +35,26 @@ class NotifCustomerController extends Controller
             $notificationList = $notificationList->where('notif_cad_cli_delivery.status', '=', $status);
         }
 
-        $notificationList = $notificationList->get();
+        $notificationList = $notificationList->orderBy('id', 'desc')->get();
 
         return response()->json($notificationList);
+    }
+
+    public function setAsViewed($notificationID)
+    {
+        $tenantID = TenantController::getTenantID();
+
+        try {
+            $sucesso = NotificationCustomer::where('id', '=', $notificationID)
+                ->where('id_tenant', '=', $tenantID)
+                ->update(['status' => 1]);
+
+            $response = array('ok' => $sucesso, 'msg' => 'Notificação visualizada com sucesso!');
+        } catch (Exception $e) {
+            $response = array('ok' => false, 'msg' => 'Não foi possível visualizar a notificação!');
+        }
+
+        return response()->json($response);
     }
 
     public function register($customerID)
