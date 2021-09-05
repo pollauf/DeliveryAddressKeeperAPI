@@ -49,6 +49,9 @@ class UserController extends Controller
         try {
             $tenantID = TenantController::getTenantID();
 
+            $id = $request->input('id');
+            $editMode = $id != null;
+
             $nome = $request->input('nome');
             $login = $request->input('login');
             $senha = md5($request->input('senha'));
@@ -56,21 +59,37 @@ class UserController extends Controller
             $token = $tenantID . '_' . $login . '_' . time();
             $token = Crypt::encrypt($token);
 
-            $isDuplicated = User::where('id_tenant', '=', $tenantID)->where('login', '=', $login)->exists();
+            $isDuplicated =
+                User::where('id_tenant', '=', $tenantID)->where('login', '=', $login);
+
+            if ($editMode)
+                $isDuplicated = $isDuplicated->where('id', '!=', $id);
+
+            $isDuplicated = $isDuplicated->exists();
+
             if ($isDuplicated) {
-                $response = array('ok' => false, 'msg' => 'O usuário já existe!');
+                $response = array('ok' => false, 'msg' => 'O login informado já existe!');
             } else {
-                $user = new User;
+                if ($editMode) {
+                    $user = User::where('id', '=', $id)->first();
+                } else {
+                    $user = new User;
+                    $user->senha = $senha;
+                    $user->token = $token;
+                }
+
                 $user->id_tenant = $tenantID;
                 $user->nome = $nome;
                 $user->login = $login;
-                $user->senha = $senha;
-                $user->token = $token;
                 $user->status = 1;
 
                 $user->save();
 
-                $response = array('ok' => true, 'msg' => 'Usuário registrado com sucesso!');
+                $response = array(
+                    'ok' => true,
+                    'msg' => !$editMode ?
+                        'Usuário registrado com sucesso!' : 'Usuário alterado com sucesso!'
+                );
             }
         } catch (Exception $e) {
             $response = array('ok' => false, 'msg' => 'Não foi possível registrar o usuário!');
