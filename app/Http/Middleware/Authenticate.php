@@ -43,7 +43,10 @@ class Authenticate
             return response()->json('No token provided', 401);
         }
 
-        $anyUser = User::where('token', '=', $token)->exists();
+        $anyUser = User::where([
+            ['token', '=', $token],
+            ['status', '=', 1]
+        ])->exists();
 
         if ($anyUser) {
             return $next($request);

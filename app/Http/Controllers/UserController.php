@@ -76,12 +76,12 @@ class UserController extends Controller
                     $user = new User;
                     $user->senha = $senha;
                     $user->token = $token;
+                    $user->status = 1;
                 }
 
                 $user->id_tenant = $tenantID;
                 $user->nome = $nome;
                 $user->login = $login;
-                $user->status = 1;
 
                 $user->save();
 
@@ -110,6 +110,23 @@ class UserController extends Controller
             $response = array('ok' => $sucesso, 'msg' => 'Senha alterada com sucesso!');
         } catch (Exception $e) {
             $response = array('ok' => false, 'msg' => 'Não foi possível alterar a senha!');
+        }
+
+        return response()->json($response);
+    }
+
+    public function setStatus($id, $status)
+    {
+        $tenantID = TenantController::getTenantID();
+
+        try {
+            $sucesso = User::where('id', '=', $id)
+                ->where('id_tenant', '=', $tenantID)
+                ->update(['status' => $status]);
+
+            $response = array('ok' => $sucesso, 'msg' => 'Status alterado com sucesso!');
+        } catch (Exception $e) {
+            $response = array('ok' => false, 'msg' => 'Não foi possível alterar o status!');
         }
 
         return response()->json($response);

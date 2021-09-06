@@ -26,6 +26,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
 
     $router->get('users', 'UserController@list');
     $router->get('user/{id}', 'UserController@getById');
+    $router->get('user/{id}/set/status/{status}', 'UserController@setStatus');
 
     $router->get('deliverycustomers', 'DeliveryCustomerController@list');
     $router->get('deliverycustomer/{id}', 'DeliveryCustomerController@getById');

@@ -30,7 +30,8 @@ class AuthController extends Controller
             $user = User::where([
                 ['id_tenant', '=', $tenantID],
                 ['login', '=', $login],
-                ['senha', '=', $senha]
+                ['senha', '=', $senha],
+                ['status', '=', 1]
             ])->first();
 
             if ($user) {
