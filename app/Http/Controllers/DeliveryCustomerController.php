@@ -89,10 +89,8 @@ class DeliveryCustomerController extends Controller
 
                 $customer->save();
 
-                if ($request->input('origem') == 1) {
-                    $notifCustomerController = new NotifCustomerController();
-                    $notifCustomerController->register($customer->id);
-                }
+                $notifCustomerController = new NotifCustomerController();
+                $notifCustomerController->register($customer->id);
 
                 $response = array('ok' => true, 'msg' => 'Cliente registrado com sucesso!');
             }

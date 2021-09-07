@@ -15,14 +15,14 @@
 
 $router->post('auth/login', 'AuthController@login');
 
-$router->post('deliverycustomer/register', 'DeliveryCustomerController@register');
+$router->post('deliverycustomer/newregister', 'DeliveryCustomerController@register');
 
 $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->get('/user', function () {
         return response()->json(auth()->user());
     });
     $router->post('user/newpassword', 'UserController@changePassword');
-    $router->post('user/register', 'UserController@register');
+    $router->post('user/newregister', 'UserController@register');
 
     $router->get('users', 'UserController@list');
     $router->get('user/{id}', 'UserController@getById');
@@ -33,7 +33,11 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->post('deliverycustomer/from/phone', 'DeliveryCustomerController@getByPhone');
 
     $router->get('notification/status/{status}', 'NotifCustomerController@list');
-    $router->get('notification/setAsViewed/{notificationID}', 'NotifCustomerController@setAsViewed');
+    $router->get('notification/setasviewed/{notificationID}', 'NotifCustomerController@setAsViewed');
+});
+
+$router->get('/', function () use ($router) {
+    return response()->json('ok');
 });
 
 /*$router->get('/', function () use ($router) {
