@@ -67,6 +67,9 @@ class DeliveryCustomerController extends Controller
         try {
             $tenantID = TenantController::getTenantID();
 
+            $id = $request->input('id');
+            $editMode = $id != null;
+
             if ($request->input('celular') == null) {
                 $response = array('ok' => false, 'msg' => 'O celular é obrigatório!');
             } else {
@@ -74,7 +77,12 @@ class DeliveryCustomerController extends Controller
                     ->where('celular', '=', $request->input('celular'))
                     ->update(['status' => 0]);
 
-                $customer = new DeliveryCustomer;
+                if ($editMode) {
+                    $customer = DeliveryCustomer::where('id', '=', $id)->first();
+                } else {
+                    $customer = new DeliveryCustomer;
+                }
+
                 $customer->id_tenant = $tenantID;
                 $customer->nome = $request->input('nome');
                 $customer->celular = $request->input('celular');
@@ -85,17 +93,38 @@ class DeliveryCustomerController extends Controller
                 $customer->cidade = $request->input('cidade');
                 $customer->estado = $request->input('estado');
                 $customer->origem = $request->input('origem');
-                $customer->status = 1;
+                $customer->status = $request->input('status');
 
                 $customer->save();
 
-                $notifCustomerController = new NotifCustomerController();
-                $notifCustomerController->register($customer->id);
+                if ($editMode) {
+                    $response = array('ok' => true, 'msg' => 'Cliente alterado com sucesso!');
+                } else {
+                    $notifCustomerController = new NotifCustomerController();
+                    $notifCustomerController->register($customer->id);
 
-                $response = array('ok' => true, 'msg' => 'Cliente registrado com sucesso!');
+                    $response = array('ok' => true, 'msg' => 'Cliente registrado com sucesso!');
+                }
             }
         } catch (Exception $e) {
             $response = array('ok' => false, 'msg' => 'Não foi possível registrar o cliente!');
+        }
+
+        return response()->json($response);
+    }
+
+    public function setStatus($id, $status)
+    {
+        try {
+            $tenantID = TenantController::getTenantID();
+
+            $sucesso = DeliveryCustomer::where('id_tenant', '=', $tenantID)
+                ->where('id', '=', $id)
+                ->update(['status' => $status]);
+
+            $response = array('ok' => $sucesso, 'msg' => 'Status alterado com sucesso!');
+        } catch (Exception $e) {
+            $response = array('ok' => false, 'msg' => 'Não foi possível alterar o status!');
         }
 
         return response()->json($response);

@@ -28,12 +28,14 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     $router->get('user/{id}', 'UserController@getById');
     $router->get('user/{id}/set/status/{status}', 'UserController@setStatus');
 
+    $router->get('deliverycustomer/{id}/set/status/{status}', 'DeliveryCustomerController@setStatus');
     $router->get('deliverycustomers', 'DeliveryCustomerController@list');
     $router->get('deliverycustomer/{id}', 'DeliveryCustomerController@getById');
     $router->post('deliverycustomer/from/phone', 'DeliveryCustomerController@getByPhone');
 
     $router->get('notification/status/{status}', 'NotifCustomerController@list');
     $router->get('notification/setasviewed/{notificationID}', 'NotifCustomerController@setAsViewed');
+    $router->get('notification/clearall', 'NotifCustomerController@clearAll');
 });
 
 $router->get('/', function () use ($router) {

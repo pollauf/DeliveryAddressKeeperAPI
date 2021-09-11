@@ -57,6 +57,22 @@ class NotifCustomerController extends Controller
         return response()->json($response);
     }
 
+    public function clearAll()
+    {
+        $tenantID = TenantController::getTenantID();
+
+        try {
+            $sucesso = NotificationCustomer::where('id_tenant', '=', $tenantID)
+                ->update(['status' => 1]);
+
+            $response = array('ok' => $sucesso, 'msg' => 'Notificações limpas com sucesso!');
+        } catch (Exception $e) {
+            $response = array('ok' => false, 'msg' => 'Não foi possível limpar as notificações!');
+        }
+
+        return response()->json($response);
+    }
+
     public function register($customerID)
     {
         try {
